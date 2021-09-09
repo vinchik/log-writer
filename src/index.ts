@@ -38,7 +38,7 @@ class SecondStreetLogWriter {
   };
   private isPaused = false;
   private restartSubject = new Subject();
-  private bufferSubject = new Subject();
+  private bufferSubject: Subject<string> = new Subject();
   private sendingObservable = this.bufferSubject
     .pipe(distinctUntilChanged())
     .pipe(tap(() => this.followingState.lastLine++))
