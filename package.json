@@ -1,0 +1,22 @@
+{
+  "name": "second-street-log-writer",
+  "version": "1.0.0",
+  "description": "For accumulating and sending logs",
+  "main": "dist/index.js",
+  "scripts": {
+    "prepare": "tsc"
+  },
+  "author": "Ivan",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.4",
+    "nedb": "^1.8.0",
+    "rxjs": "^7.3.0",
+    "slice-file": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/nedb": "^1.8.12",
+    "@types/node": "^16.9.0",
+    "typescript": "^4.4.2"
+  }
+}
