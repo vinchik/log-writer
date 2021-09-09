@@ -18,43 +18,40 @@ import {
 } from 'rxjs/operators';
 
 import getDbInstance from './promisified-db';
-import { DbEntryType, DbLogFileRecord, DbLogStateRecord, FollowingState, LogMessageFormatted } from './types';
+import { DbEntryType, DbLogFileRecord, DbLogStateRecord, FollowingState } from './types';
 import { createStream, Options } from './rotating-file-stream';
 
 class SecondStreetLogWriter {
-  token;
-  logStream;
-  readStream;
-  logReader;
-  rl;
-  telemetryApi;
-  logFileLinesToSend;
-  db;
-  newLogFile;
-  followingState: FollowingState = {
+  private token;
+  private logStream;
+  private readStream;
+  private logReader;
+  private rl;
+  private telemetryApi;
+  private logFileLinesToSend;
+  private db;
+  private newLogFile;
+  private followingState: FollowingState = {
     lastLine: 0,
     totalLines: 0,
     filename: null,
   };
-  isPaused = false;
-  restartSubject = new Subject();
-  bufferSubject = new Subject();
-  sendingObservable = this.bufferSubject
+  private isPaused = false;
+  private restartSubject = new Subject();
+  private bufferSubject = new Subject();
+  private sendingObservable = this.bufferSubject
     .pipe(distinctUntilChanged())
     .pipe(tap(() => this.followingState.lastLine++))
-    // @ts-ignore
-    .pipe(scan((acc, current) => ([...acc, current]), []))
-    // @ts-ignore
-    .pipe(filter(val => val.length === this.logFileLinesToSend))
+    .pipe(scan((acc: string[], current: string) => ([...acc, current]), []))
+    .pipe(filter((val: string[]) => val.length === this.logFileLinesToSend))
     .pipe(tap(() => {
       this.isPaused = true;
       this.readStream.pause();
     }))
     .pipe(takeUntil(this.restartSubject))
     .pipe(
-      switchMap((value) => defer(() => axios.post( // todo: request via http service
+      switchMap((value: string[]) => defer(() => axios.post(
         this.telemetryApi,
-        // @ts-ignore
         value.join('\n'),
         { headers: { 'content-type': 'text/plain', Authorization: `Bearer ${this.token}` } },
       ))
@@ -68,7 +65,9 @@ class SecondStreetLogWriter {
     this.token = token;
   }
 
-  constructor(logFileSize, logFileLinesToSend, telemetryApi, logPath) {
+  constructor(logFileSize: string, logFileLinesToSend: number, telemetryApi: string, logPath?: string) {
+    this.logFileLinesToSend = logFileLinesToSend;
+    this.telemetryApi = telemetryApi;
     this.db = getDbInstance(logPath);
     const fileNameGenerator = (data, index): string => `logFile-${index}.jsonl`;
 
@@ -99,7 +98,7 @@ class SecondStreetLogWriter {
     this.logStream.once('open', filename => this.startFollowingProcess(filename));
   }
 
-  async createLineListener(filename, lastLine): Promise<void> {
+  private async createLineListener(filename, lastLine): Promise<void> {
     if (this.logReader) {
       this.logReader.close();
     }
@@ -147,7 +146,7 @@ class SecondStreetLogWriter {
     });
   }
 
-  async startFollowingProcess(filename): Promise<void> {
+  private async startFollowingProcess(filename): Promise<void> {
     let stateRecord: DbLogStateRecord = await this.db.findOne({ type: DbEntryType.LogState });
 
     if (!stateRecord) {
@@ -160,15 +159,16 @@ class SecondStreetLogWriter {
     }
 
     this.followingState = stateRecord;
+    console.log(this.followingState);
 
     await this.createLineListener(this.followingState.filename, this.followingState.lastLine);
   }
 
-  async removed(filename): Promise<void> {
+  private async removed(filename): Promise<void> {
     await this.db.remove({ filename });
   }
 
-  async rotated(filename): Promise<void> {
+  private async rotated(filename): Promise<void> {
     this.readStream.pause();
     const lines = await this.countLogLines(filename);
 
@@ -196,7 +196,7 @@ class SecondStreetLogWriter {
   }
 
 
-  countLogLines(logFileName: string): Promise<number> {
+  private countLogLines(logFileName: string): Promise<number> {
     return new Promise((res, rej) => {
       exec(`wc -l < ${logFileName}`, (error, stdout, stderr) => {
         if (error || stderr) {
@@ -208,7 +208,7 @@ class SecondStreetLogWriter {
     });
   }
 
-  public writeLog(log: LogMessageFormatted, token?: string): void {
+  public writeLog(log: object, token?: string): void {
     if (token) {
       this.token = token;
     }
