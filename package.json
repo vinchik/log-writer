@@ -4,7 +4,8 @@
   "description": "For accumulating and sending logs",
   "main": "dist/index.js",
   "scripts": {
-    "prepare": "tsc"
+    "prepare": "tsc",
+    "postinstall": "tsc"
   },
   "author": "Ivan",
   "license": "ISC",
