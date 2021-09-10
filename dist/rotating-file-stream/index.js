@@ -1,5 +1,5 @@
 "use strict";
-// @ts-nocheck
+// @ts-nocheck - external library
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||

@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck - external library
 
 import { ChildProcess, exec } from 'child_process';
 import { Gzip, createGzip } from 'zlib';

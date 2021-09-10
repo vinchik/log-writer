@@ -3,7 +3,6 @@ import path from 'path';
 import { exec } from 'child_process';
 import readline from 'readline';
 import axios from 'axios';
-import sliceFile from 'slice-file';
 import { Subject, defer } from 'rxjs';
 import {
   scan,
@@ -20,6 +19,7 @@ import {
 import getDbInstance from './promisified-db';
 import { DbEntryType, DbLogFileRecord, DbLogStateRecord, FollowingState } from './types';
 import { createStream, Options } from './rotating-file-stream';
+import sliceFile from './slice-file';
 
 class SecondStreetLogWriter {
   private token;
@@ -208,11 +208,7 @@ class SecondStreetLogWriter {
     });
   }
 
-  public writeLog(log: object, token?: string): void {
-    if (token) {
-      this.token = token;
-    }
-
+  public writeLog(log: object): void {
     if (this.logStream) {
       this.logStream.write(`${JSON.stringify(log)}\n`);
     }

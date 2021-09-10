@@ -20,6 +20,6 @@ declare class SecondStreetLogWriter {
     private removed;
     private rotated;
     private countLogLines;
-    writeLog(log: object, token?: string): void;
+    writeLog(log: object): void;
 }
 export default SecondStreetLogWriter;

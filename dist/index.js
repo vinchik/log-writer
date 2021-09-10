@@ -64,12 +64,12 @@ var path_1 = __importDefault(require("path"));
 var child_process_1 = require("child_process");
 var readline_1 = __importDefault(require("readline"));
 var axios_1 = __importDefault(require("axios"));
-var slice_file_1 = __importDefault(require("slice-file"));
 var rxjs_1 = require("rxjs");
 var operators_1 = require("rxjs/operators");
 var promisified_db_1 = __importDefault(require("./promisified-db"));
 var types_1 = require("./types");
 var rotating_file_stream_1 = require("./rotating-file-stream");
+var slice_file_1 = __importDefault(require("./slice-file"));
 var SecondStreetLogWriter = /** @class */ (function () {
     function SecondStreetLogWriter(logFileSize, logFileLinesToSend, telemetryApi, logPath) {
         var _this = this;
@@ -85,12 +85,14 @@ var SecondStreetLogWriter = /** @class */ (function () {
             .pipe((0, operators_1.distinctUntilChanged)())
             .pipe((0, operators_1.tap)(function () { return _this.followingState.lastLine++; }))
             .pipe((0, operators_1.scan)(function (acc, current) { return (__spreadArray(__spreadArray([], acc, true), [current], false)); }, []))
+            .pipe((0, operators_1.tap)(function (val) { return console.log(val.length + '/' + _this.logFileLinesToSend); }))
             .pipe((0, operators_1.filter)(function (val) { return val.length === _this.logFileLinesToSend; }))
             .pipe((0, operators_1.tap)(function () {
             _this.isPaused = true;
             _this.readStream.pause();
         }))
             .pipe((0, operators_1.takeUntil)(this.restartSubject))
+            .pipe((0, operators_1.tap)(function () { return console.log('sending'); }))
             .pipe((0, operators_1.switchMap)(function (value) { return (0, rxjs_1.defer)(function () { return axios_1.default.post(_this.telemetryApi, value.join('\n'), { headers: { 'content-type': 'text/plain', Authorization: "Bearer " + _this.token } }); })
             .pipe((0, operators_1.retryWhen)(function (errors) { return errors.pipe((0, operators_1.delay)(10000)); })); }))
             .pipe((0, operators_1.repeat)());
@@ -278,10 +280,7 @@ var SecondStreetLogWriter = /** @class */ (function () {
             });
         });
     };
-    SecondStreetLogWriter.prototype.writeLog = function (log, token) {
-        if (token) {
-            this.token = token;
-        }
+    SecondStreetLogWriter.prototype.writeLog = function (log) {
         if (this.logStream) {
             this.logStream.write(JSON.stringify(log) + "\n");
         }
