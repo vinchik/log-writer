@@ -12,7 +12,7 @@
     "axios": "^0.21.4",
     "nedb": "^1.8.0",
     "rxjs": "^7.3.0",
-    "slice-file": "^1.0.0"
+    "slice-file": "github:vinchik/slice-file"
   },
   "devDependencies": {
     "@types/nedb": "^1.8.12",
