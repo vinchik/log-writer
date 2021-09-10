@@ -13,11 +13,11 @@
     "axios": "^0.21.4",
     "nedb": "^1.8.0",
     "rxjs": "^7.3.0",
-    "slice-file": "github:vinchik/slice-file"
+    "slice-file": "github:vinchik/slice-file",
+    "typescript": "^4.4.2"
   },
   "devDependencies": {
     "@types/nedb": "^1.8.12",
-    "@types/node": "^16.9.0",
-    "typescript": "^4.4.2"
+    "@types/node": "^16.9.0"
   }
 }
