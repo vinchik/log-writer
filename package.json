@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "For accumulating and sending logs",
   "main": "dist/index.js",
-  "scripts": {},
+  "scripts": {
+    "build": "rm -rf dist && tsc"
+  },
   "author": "Ivan",
   "license": "UNLICENSED",
   "dependencies": {
