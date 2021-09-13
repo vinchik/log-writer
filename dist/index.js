@@ -208,7 +208,6 @@ var SecondStreetLogWriter = /** @class */ (function () {
                         _a.label = 3;
                     case 3:
                         this.followingState = stateRecord;
-                        console.log(this.followingState);
                         return [4 /*yield*/, this.createLineListener(this.followingState.filename, this.followingState.lastLine)];
                     case 4:
                         _a.sent();

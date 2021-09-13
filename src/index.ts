@@ -159,7 +159,6 @@ class SecondStreetLogWriter {
     }
 
     this.followingState = stateRecord;
-    console.log(this.followingState);
 
     await this.createLineListener(this.followingState.filename, this.followingState.lastLine);
   }
