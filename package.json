@@ -7,7 +7,7 @@
   "author": "Ivan",
   "license": "UNLICENSED",
   "dependencies": {
-    "axios": "^0.21.4",
+    "axios": "0.18.1",
     "nedb": "^1.8.0",
     "rxjs": "^7.3.0",
     "inherits": "~1.0.0",
